@@ -3,15 +3,6 @@ from gmusicapi import Mobileclient
 import sys
 
 
-# TODO remove this unused function, previously used to return tracks from a given playlist
-def get_playlist_tracks(name, playlists):
-    for playlist in playlists:
-        if playlist['name'].lower() == name.lower():
-            tracks = playlist['tracks'] 
-            return tracks 
-    print "ERROR: No playlist '" + name + "'found"
-    exit(1)
-
 def find_and_remove_dups(api, tracks):
     track_set = set()
     for track in tracks:
@@ -32,7 +23,11 @@ if len(sys.argv) != 1:
     exit(0)
 
 api = Mobileclient()
-logged_in = api.login('username', 'password')
+# A valid android_id can be pulled from an mobile device authenticated
+# on the google account used for this script
+# It can be retrieved using the Device ID app and can sometimes be found
+# under About Phone in Settings
+logged_in = api.login('username', 'password', 'android_id')
 
 if logged_in:
     print "Successfully logged in. Finding duplicates in playlists"
@@ -42,4 +37,8 @@ if logged_in:
         print "Deleting duplicates from " + playlist['name'] + "..."
         tracks = playlist['tracks']
         find_and_remove_dups(api, tracks)
+else:
+    print "Login failed"
+        
+raw_input()
 
